@@ -1,0 +1,32 @@
+<header class="px-4 sm:px-6 lg:px-8">
+  <div class="flex items-center justify-between border-b border-zinc-100 py-3 text-sm">
+    <div class="flex items-center gap-4">
+      <a href="/">
+        <img src={~p"/images/logo.svg"} width="36" />
+      </a>
+      <p class="text-2xl font-bold text-brand">
+        Arboretum
+      </p>
+    </div>
+    <div class="flex items-center gap-4 font-semibold leading-6 text-zinc-900">
+      <a href={~p"/agents"} class="hover:text-zinc-700">
+        Agents
+      </a>
+      <a href={~p"/batches"} class="hover:text-zinc-700">
+        Batch Operations
+      </a>
+      <a
+        href={~p"/dev/dashboard"}
+        class="rounded-lg bg-zinc-100 px-2 py-1 hover:bg-zinc-200/80"
+      >
+        Dashboard <span aria-hidden="true">&rarr;</span>
+      </a>
+    </div>
+  </div>
+</header>
+<main class="px-4 py-10 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-6xl">
+    <.flash_group flash={@flash} />
+    {@inner_content}
+  </div>
+</main>

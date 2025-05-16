@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "postgres-flora-local": {
+      "command": "mcp-server-postgres",
+      "args": [
+        "postgresql://postgres@localhost:5432/arboretum_dev"
+      ],
+      "alwaysAllow": [
+        "query"
+      ],
+      "disabled": false
+    }
+  }
+}

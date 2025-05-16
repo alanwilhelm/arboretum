@@ -1,0 +1,137 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-6 flex justify-between items-center">
+    <h1 class="text-2xl font-bold">Agent: <%= @agent.name %></h1>
+    <div class="flex space-x-4">
+      <.link patch={~p"/agents/#{@agent}/edit"} class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+        Edit Agent
+      </.link>
+      <.link navigate={~p"/agents"} class="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded">
+        Back to Agents
+      </.link>
+    </div>
+  </div>
+  
+  <.modal :if={@live_action == :edit} id="agent-modal" show on_cancel={JS.patch(~p"/agents/#{@agent}")}>
+    <.live_component
+      module={ArboretumWeb.AgentLive.FormComponent}
+      id={@agent.id}
+      title="Edit Agent"
+      action={:edit}
+      agent={@agent}
+      return_to={~p"/agents/#{@agent}"}
+    />
+  </.modal>
+
+  <div class="bg-white shadow overflow-hidden rounded-lg mb-6">
+    <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Agent Details</h3>
+    </div>
+    <div class="px-4 py-5 sm:p-6">
+      <dl class="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">ID</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @agent.id %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Name</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @agent.name %></dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Status</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <span class={status_badge_class(@agent.status)}>
+              <%= @agent.status %>
+            </span>
+          </dd>
+        </div>
+        
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Change Status</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <div class="flex space-x-2">
+              <button phx-click="change_status" phx-value-status="active" class="bg-green-500 hover:bg-green-700 text-white text-xs py-1 px-2 rounded">
+                Activate
+              </button>
+              <button phx-click="change_status" phx-value-status="inactive" class="bg-gray-500 hover:bg-gray-700 text-white text-xs py-1 px-2 rounded">
+                Deactivate
+              </button>
+            </div>
+          </dd>
+        </div>
+
+        <div class="col-span-2">
+          <dt class="text-sm font-medium text-gray-500">Last Error</dt>
+          <dd class="mt-1 text-sm text-gray-900">
+            <%= if @agent.last_error do %>
+              <div class="text-red-600 bg-red-50 p-2 rounded">
+                <%= @agent.last_error %>
+              </div>
+            <% else %>
+              None
+            <% end %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden rounded-lg mb-6">
+    <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">LLM Configuration</h3>
+    </div>
+    <div class="px-4 py-5 sm:p-6">
+      <pre class="bg-gray-50 p-4 rounded overflow-auto text-sm"><%= format_json(@agent.llm_config) %></pre>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Abilities (<%= length(@agent.abilities) %>)</h3>
+      </div>
+      <div class="px-4 py-5 sm:p-6">
+        <pre class="bg-gray-50 p-4 rounded overflow-auto text-sm"><%= format_list(@agent.abilities) %></pre>
+      </div>
+    </div>
+
+    <div class="bg-white shadow overflow-hidden rounded-lg">
+      <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Responsibilities (<%= length(@agent.responsibilities) %>)</h3>
+      </div>
+      <div class="px-4 py-5 sm:p-6">
+        <pre class="bg-gray-50 p-4 rounded overflow-auto text-sm"><%= format_list(@agent.responsibilities) %></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden rounded-lg mt-6">
+    <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Prompts</h3>
+    </div>
+    <div class="px-4 py-5 sm:p-6">
+      <pre class="bg-gray-50 p-4 rounded overflow-auto text-sm"><%= format_json(@agent.prompts) %></pre>
+    </div>
+  </div>
+
+  <div class="bg-white shadow overflow-hidden rounded-lg mt-6">
+    <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+      <h3 class="text-lg leading-6 font-medium text-gray-900">Retry Policy</h3>
+    </div>
+    <div class="px-4 py-5 sm:p-6">
+      <pre class="bg-gray-50 p-4 rounded overflow-auto text-sm"><%= format_json(@agent.retry_policy) %></pre>
+    </div>
+  </div>
+
+  <div class="mt-8 flex justify-between items-center">
+    <div class="text-gray-500 text-sm">
+      <p>Created: <%= @agent.inserted_at %></p>
+      <p>Last Updated: <%= @agent.updated_at %></p>
+    </div>
+    
+    <button phx-click="delete" data-confirm="Are you sure you want to delete this agent?" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+      Delete Agent
+    </button>
+  </div>
+</div>

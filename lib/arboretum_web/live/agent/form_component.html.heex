@@ -1,0 +1,138 @@
+<div>
+  <h2 class="text-xl font-semibold mb-6"><%= @title %></h2>
+
+  <.form
+    for={@changeset}
+    id="agent-form"
+    phx-target={@myself}
+    phx-change="validate"
+    phx-submit="save"
+    class="space-y-6"
+  >
+    <div>
+      <.input field={@changeset[:name]} type="text" label="Name" required />
+    </div>
+
+    <div>
+      <.input
+        field={@changeset[:status]}
+        type="select"
+        label="Status"
+        options={[
+          {"Active", "active"},
+          {"Inactive", "inactive"},
+          {"Error", "error"},
+          {"Disabled (Flapping)", "disabled_flapping"}
+        ]}
+        required
+      />
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">LLM Configuration</label>
+      <textarea
+        name="agent[llm_config]"
+        rows="6"
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md font-mono"
+        phx-debounce="blur"
+      ><%= format_json_field(@changeset, :llm_config) %></textarea>
+      <div class="mt-1 text-xs text-gray-500">
+        JSON format. Required fields: api_key_env_var, model, endpoint_url
+      </div>
+      <%= error_tag(@changeset, :llm_config) %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Prompts</label>
+      <textarea
+        name="agent[prompts]"
+        rows="6"
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md font-mono"
+        phx-debounce="blur"
+      ><%= format_json_field(@changeset, :prompts) %></textarea>
+      <div class="mt-1 text-xs text-gray-500">
+        JSON format. Key-value pairs of prompt templates.
+      </div>
+      <%= error_tag(@changeset, :prompts) %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Abilities</label>
+      <textarea
+        name="agent[abilities]"
+        rows="4"
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md font-mono"
+        phx-debounce="blur"
+        placeholder="Arboretum.Abilities.Echo.handle/3"
+      ><%= format_list_field(@changeset, :abilities) %></textarea>
+      <div class="mt-1 text-xs text-gray-500">
+        One ability per line. Format: Module.function/arity
+      </div>
+      <%= error_tag(@changeset, :abilities) %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Responsibilities</label>
+      <textarea
+        name="agent[responsibilities]"
+        rows="4"
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md font-mono"
+        phx-debounce="blur"
+        placeholder="process_new_document:pdf
+daily_report:sales
+cron:0 0 * * *"
+      ><%= format_list_field(@changeset, :responsibilities) %></textarea>
+      <div class="mt-1 text-xs text-gray-500">
+        One responsibility per line. Format: type:value or cron:schedule
+      </div>
+      <%= error_tag(@changeset, :responsibilities) %>
+    </div>
+
+    <div>
+      <label class="block text-sm font-medium text-gray-700 mb-1">Retry Policy</label>
+      <textarea
+        name="agent[retry_policy]"
+        rows="4"
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md font-mono"
+        phx-debounce="blur"
+      ><%= format_json_field(@changeset, :retry_policy) %></textarea>
+      <div class="mt-1 text-xs text-gray-500">
+        JSON format. Type can be "fixed" or "exponential_backoff".
+      </div>
+      <%= error_tag(@changeset, :retry_policy) %>
+    </div>
+
+    <div>
+      <.input field={@changeset[:last_error]} type="textarea" label="Last Error" rows="2" />
+    </div>
+
+    <div class="flex justify-end space-x-3">
+      <.button type="button" phx-click="cancel" phx-target={@myself} class="bg-gray-300 hover:bg-gray-400">
+        Cancel
+      </.button>
+      <.button type="submit" phx-disable-with="Saving..." class="bg-indigo-600 hover:bg-indigo-700">
+        Save Agent
+      </.button>
+    </div>
+  </.form>
+</div>
+
+<% # Helper functions for the form %>
+<script>
+  function formatJSON(input) {
+    try {
+      // Parse the input JSON
+      const obj = JSON.parse(input.value);
+      // Format it with 2 spaces indentation
+      input.value = JSON.stringify(obj, null, 2);
+    } catch (e) {
+      // If parsing fails, leave the input as is
+      console.error("Invalid JSON:", e);
+    }
+  }
+
+  document.querySelectorAll('textarea[name="agent[llm_config]"], textarea[name="agent[prompts]"], textarea[name="agent[retry_policy]"]')
+    .forEach(el => {
+      el.addEventListener('blur', () => formatJSON(el));
+    });
+</script>
