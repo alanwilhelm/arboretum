@@ -1,123 +1,154 @@
-# Arboretum
+# Arboretum: Dynamic Agent Architecture for LLMs
 
-A dynamic agent architecture for large-scale LLM operations, built with Phoenix and Elixir.
+![Arboretum Banner](priv/static/images/logo.svg)
 
 ## Overview
 
-Arboretum is a system for creating, managing, and scaling autonomous agents that interact with Large Language Models (LLMs). The system supports both individual agents and large-scale batch operations with up to hundreds of concurrent agents.
+Arboretum is a powerful dynamic agent architecture built with Elixir and Phoenix for creating, managing, and scaling autonomous agents that interact with Large Language Models (LLMs). It excels at both individual agent operations and large-scale batch processing with up to hundreds of concurrent agents.
 
-Each agent has:
-- A configuration stored in the database
-- A set of abilities (functions they can execute)
-- Responsibilities (triggers that activate the agent)
-- Custom prompts and LLM settings
+## ✨ Key Features
 
-The system is built with Phoenix 1.7, LiveView, Ecto with PostgreSQL, and TailwindCSS.
+- **Dynamic Agent System**: Create, configure, and deploy LLM agents on demand
+- **Batch Processing**: Run hundreds of concurrent agent operations with built-in rate limiting
+- **Phoenix LiveView UI**: Real-time interface for agent management and monitoring
+- **Provider Abstraction**: Support for multiple LLM providers with a unified API
+- **Rate Limiting**: Smart rate limiting to respect API provider constraints
+- **Resilient Architecture**: Built with OTP principles for maximum reliability
 
-## Features
-
-- **Individual Agent Management**: Create, update, and delete agent configurations via a web interface
-- **Batch Operations**: Run large-scale operations with 100+ concurrent agents
-- **Rate Limiting**: Provider-specific rate limiting to prevent API throttling
-- **Result Storage**: Store and analyze batch operation results
-- **Automatic Process Lifecycle**: Agents are automatically started, stopped, and restarted based on configuration changes
-- **Ability System**: Agents can execute abilities (functions) based on their configuration
-- **Responsibility Triggers**: Agents can be triggered by events or scheduled tasks
-- **LLM Integration**: Supports multiple LLM providers (OpenAI, simulated, etc.)
-
-## Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Elixir 1.14+
+- Elixir 1.15+
 - Erlang 26+
-- PostgreSQL 14+
-- Node.js 16+ (for assets)
+- PostgreSQL 13+
+- Node.js 18+ (for asset compilation)
 
 ### Setup
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/yourusername/arboretum.git
-   cd arboretum
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/alanwilhelm/arboretum.git
+cd arboretum
 
-2. Install dependencies and setup the database:
-   ```bash
-   mix setup
-   ```
+# Install dependencies
+mix setup
 
-3. Start the Phoenix server:
-   ```bash
-   mix phx.server
-   ```
+# Reset and seed the database
+./scripts/reset_and_seed_db.sh
 
-4. Visit [`localhost:4000/agents`](http://localhost:4000/agents) in your browser.
+# Start the Phoenix server
+mix phx.server
+```
 
-### Creating Your First Agent
+Then visit [`localhost:4000`](http://localhost:4000) to explore the application.
 
-1. Navigate to the agents page and click "New Agent"
-2. Fill in the required fields:
-   - **Name**: A unique identifier for your agent
-   - **Status**: Set to "inactive" initially
-   - **LLM Configuration**: JSON object with `api_key_env_var`, `model`, and `endpoint_url`
-   - **Abilities**: List of abilities, e.g., `Arboretum.Abilities.Echo.handle/3`
-   - **Responsibilities**: List of responsibilities, e.g., `echo:test` or `cron:60`
-3. Save the agent
-4. Change the status to "active" to start the agent
+## 📦 Project Structure
 
-## Architecture
+```
+arboretum/
+├── lib/
+│   ├── arboretum/               # Core business logic
+│   │   ├── abilities/           # Agent abilities
+│   │   ├── agents/              # Agent management
+│   │   ├── batch_results/       # Batch operation results
+│   │   └── ...
+│   ├── arboretum_web/           # Web interface
+│   │   ├── live/                # LiveView components
+│   │   ├── controllers/         # Web controllers
+│   │   └── ...
+│   └── examples/                # Example use cases
+├── priv/
+│   ├── repo/                    # Database migrations and seeds
+│   └── static/                  # Static assets
+├── test/                        # Test suite
+├── scripts/                     # Utility scripts
+└── docs/                        # Documentation and planning
+```
 
-The system is built around these core components:
+## 🧩 Core Components
 
-- **Agents Context**: Manages agent configurations in the database
-- **AgentServerManager**: Monitors agent configurations and manages agent processes
-- **AgentServer**: Represents a running agent, executing abilities based on responsibilities
-- **Abilities**: Modular functions that agents can execute
-- **LLMClient**: Interface for interacting with language models
+### Agent System
 
-## Development
+Arboretum's agent system is built on Elixir's GenServer and OTP principles:
 
-### Commands
+- **AgentServer**: Individual agent processes that can perform LLM operations
+- **AgentServerManager**: Supervises and coordinates agent lifecycles
+- **Registry & DynamicSupervisor**: Core OTP components for managing dynamic processes
+
+### Batch Processing
+
+The batch processing system enables large-scale concurrent operations:
+
+- **BatchManager**: Coordinates batch operations across multiple agents
+- **BatchResults**: Stores and retrieves operation results
+- **Rate Limiting**: Prevents API rate limit violations
+
+### LLM Integration
+
+The LLM client system provides a unified interface to language models:
+
+- **LLMClient**: Core client with provider abstraction
+- **Middleware**: Extensible middleware system for request processing
+- **Error Handling**: Robust error handling with retries
+
+## 🌐 Web Interface
+
+The web interface is built with Phoenix LiveView for real-time interactions:
+
+- **Agent Management**: Create, configure, and monitor agents
+- **Batch Operations**: Launch and track batch operations
+- **Results Viewer**: Analyze operation results
+
+## 📚 Documentation
+
+For more detailed documentation:
+
+- See the [docs/](docs/) directory for planning and architecture documents
+- Review the [GitHub Wiki](https://github.com/alanwilhelm/arboretum/wiki) for guides and tutorials
+- Check out [examples/](lib/examples/) for sample implementations
+
+## 🚧 Current Status & Roadmap
+
+Arboretum is under active development. Current focus areas:
+
+- Building a monitoring dashboard
+- Adding streaming support
+- Implementing API key management
+- Developing a comprehensive test suite
+
+For a detailed roadmap, see our [GitHub Project](https://github.com/alanwilhelm/arboretum/projects) or [Issues](https://github.com/alanwilhelm/arboretum/issues).
+
+## 🧪 Testing
 
 ```bash
-# Run tests
+# Run the test suite
 mix test
 
+# Run with detailed output
+mix test --trace
+```
+
+## 🧰 Development Tools
+
+```bash
 # Format code
 mix format
-
-# Check for compilation warnings
-mix compile --warnings-as-errors
 
 # Check formatting
 mix format --check-formatted
 
-# Run the server with auto-reload
-mix phx.server
+# Run migrations
+./scripts/migrate.sh
+
+# Reset and seed the database
+./scripts/reset_and_seed_db.sh
 ```
 
-### Adding New Abilities
+## 🤝 Contributing
 
-1. Create a new module in `lib/arboretum/abilities/`:
-   ```elixir
-   defmodule Arboretum.Abilities.YourAbility do
-     use Arboretum.Abilities.Ability
-     
-     @impl true
-     def handle(payload, agent_config, llm_client) do
-       # Your ability logic here
-       {:ok, result}
-     end
-   end
-   ```
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-2. Add the ability to an agent's configuration: `Arboretum.Abilities.YourAbility.handle/3`
+## 📄 License
 
-## License
-
-[MIT License](LICENSE)
-
-## Contributing
-
-Please see [NEXT_STEPS.md](NEXT_STEPS.md) for planned enhancements and [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
