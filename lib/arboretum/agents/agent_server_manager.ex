@@ -233,7 +233,7 @@ defmodule Arboretum.Agents.AgentServerManager do
   
   # Simple flap detection - in a real system, this might track crashes over time
   # and be more sophisticated, possibly stored in ETS or another persistence layer
-  defp check_flapping(agent_id, _reason) do
+  defp check_flapping(_agent_id, _reason) do
     # For now, we'll return false as a placeholder
     # In a real implementation, this would track crash times and frequencies
     false

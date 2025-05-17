@@ -52,7 +52,7 @@ defmodule ArboretumWeb.BatchLive.Show do
   
   # Show prompt details
   @impl true
-  def handle_event("show_prompt", %{"id" => id}, socket) do
+  def handle_event("show_prompt", %{"id" => _id}, socket) do
     # TODO: implement get_result functionality
     result = nil
     {:noreply, assign(socket, show_prompt: result)}
@@ -60,7 +60,7 @@ defmodule ArboretumWeb.BatchLive.Show do
   
   # Show response details
   @impl true
-  def handle_event("show_response", %{"id" => id}, socket) do
+  def handle_event("show_response", %{"id" => _id}, socket) do
     # TODO: implement get_result functionality
     result = nil
     {:noreply, assign(socket, show_response: result)}
@@ -74,7 +74,7 @@ defmodule ArboretumWeb.BatchLive.Show do
   
   # Toggle processed status for a single result
   @impl true
-  def handle_event("toggle_processed", %{"id" => id}, socket) do
+  def handle_event("toggle_processed", %{"id" => _id}, socket) do
     # TODO: implement get_result and mark_processed functionality
     results = BatchResults.get_batch_results(socket.assigns.batch_id)
     {:noreply, assign(socket, results: results)}

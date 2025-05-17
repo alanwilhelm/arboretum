@@ -12,7 +12,7 @@ defmodule Arboretum.LLMClient do
   """
   
   require Logger
-  alias ExOpenAI.Client
+  alias ExOpenAI.Chat
   
   defstruct [
     :provider,     # :openai, :anthropic, etc.
@@ -260,7 +260,7 @@ defmodule Arboretum.LLMClient do
       
       # Execute the API call
       try do
-        case Client.chat_completion(
+        case Chat.create_chat_completion(
           messages,
           model: client.model,
           temperature: options.temperature,
