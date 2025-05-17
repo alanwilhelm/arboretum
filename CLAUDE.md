@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Arboretum is a Phoenix web application built with Elixir. It uses Phoenix 1.7, LiveView, Ecto with PostgreSQL, and TailwindCSS for styling.
 
+**GitHub Organization**: This project is hosted under the `floranetwork` organization on GitHub.
+
 ## Commands
 
 ### Setup and Installation
