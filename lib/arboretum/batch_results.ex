@@ -107,7 +107,7 @@ defmodule Arboretum.BatchResults do
       :ets.insert(state.table, {key, result})
       Logger.info("Stored result for batch #{result.batch_id}, agent #{result.agent_id}")
     else
-      Logger.warn("Invalid result format: #{inspect(result)}")
+      Logger.warning("Invalid result format: #{inspect(result)}")
     end
     
     {:noreply, state}

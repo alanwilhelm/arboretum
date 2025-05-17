@@ -121,7 +121,7 @@ defmodule Arboretum.Examples.HundredAgentDemo do
       Logger.info("#{result_count} total results available. Access with:")
       Logger.info("BatchResults.get_batch_results(\"#{batch_id}\")")
     else
-      Logger.warn("No results available for batch #{batch_id}")
+      Logger.warning("No results available for batch #{batch_id}")
     end
   end
 end

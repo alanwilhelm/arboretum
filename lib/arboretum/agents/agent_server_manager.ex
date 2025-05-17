@@ -63,7 +63,7 @@ defmodule Arboretum.Agents.AgentServerManager do
     # Only start the agent if it's not already running
     state =
       if Map.has_key?(state.running_agents, agent_config.id) do
-        Logger.warn("Agent #{agent_config.name} (#{agent_config.id}) already running, ignoring create event")
+        Logger.warning("Agent #{agent_config.name} (#{agent_config.id}) already running, ignoring create event")
         state
       else
         case start_agent_process(agent_config) do
@@ -174,13 +174,13 @@ defmodule Arboretum.Agents.AgentServerManager do
   @impl true
   def handle_info({:DOWN, ref, :process, pid, reason}, state) do
     # Find the agent ID for this pid/ref
-    {agent_id, agent_data} = 
+    {agent_id, _agent_data} = 
       Enum.find(state.running_agents, {nil, nil}, fn {_id, data} -> 
         data.pid == pid && data.ref == ref
       end)
       
     if agent_id do
-      Logger.warn("Agent process #{agent_id} crashed: #{inspect(reason)}")
+      Logger.warning("Agent process #{agent_id} crashed: #{inspect(reason)}")
       
       # Check if we should restart or disable due to flapping
       flapping? = check_flapping(agent_id, reason)
@@ -226,7 +226,7 @@ defmodule Arboretum.Agents.AgentServerManager do
       end
     else
       # Unknown process, ignore
-      Logger.warn("Received DOWN message for unknown process: #{inspect(pid)}")
+      Logger.warning("Received DOWN message for unknown process: #{inspect(pid)}")
       {:noreply, state}
     end
   end
@@ -249,7 +249,7 @@ defmodule Arboretum.Agents.AgentServerManager do
         {:ok, pid}
         
       {:error, {:already_started, pid}} ->
-        Logger.warn("Agent #{agent_config.name} already running with pid #{inspect(pid)}")
+        Logger.warning("Agent #{agent_config.name} already running with pid #{inspect(pid)}")
         {:ok, pid}
         
       {:error, reason} ->
@@ -267,7 +267,7 @@ defmodule Arboretum.Agents.AgentServerManager do
         :ok
         
       {:error, :not_found} ->
-        Logger.warn("Agent #{agent_id} not found or already stopped")
+        Logger.warning("Agent #{agent_id} not found or already stopped")
         :ok
         
       {:error, reason} ->

@@ -53,7 +53,6 @@ defmodule Arboretum.BatchManager do
   require Logger
   alias Arboretum.Agents
   alias Arboretum.Agents.Agent
-  alias ExRated.Server, as: RateLimiter
   
   # Rate limiting buckets for different LLM providers
   @rate_limit_buckets %{
@@ -367,9 +366,23 @@ defmodule Arboretum.BatchManager do
       end
     
     # Check if the request is allowed
-    case RateLimiter.check(bucket, interval_ms, limit, cost) do
+    # Note: ExRated doesn't support a cost parameter, so we check multiple times for cost > 1
+    check_result = 
+      if cost == 1 do
+        ExRated.check_rate(bucket, interval_ms, limit)
+      else
+        # For cost > 1, we need to check multiple times
+        Enum.reduce_while(1..cost, {:ok, 0}, fn _i, _acc ->
+          case ExRated.check_rate(bucket, interval_ms, limit) do
+            {:ok, count} -> {:cont, {:ok, count}}
+            {:error, _} = error -> {:halt, error}
+          end
+        end)
+      end
+    
+    case check_result do
       {:ok, _count} -> :ok
-      {:error, _count} -> 
+      {:error, _limit} -> 
         # Calculate time to wait until next slot is available
         # This is an approximation - the exact time depends on the implementation
         # of ExRated and when previous requests were made

@@ -2,7 +2,6 @@ defmodule ArboretumWeb.AgentLive.FormComponent do
   use ArboretumWeb, :live_component
 
   alias Arboretum.Agents
-  alias Arboretum.Agents.Agent
   
   # Helper functions for template
   defp format_json_field(changeset, field) do
@@ -88,7 +87,7 @@ defmodule ArboretumWeb.AgentLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Agent updated successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_navigate(to: socket.assigns.return_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :changeset, changeset)}
@@ -101,7 +100,7 @@ defmodule ArboretumWeb.AgentLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Agent created successfully")
-         |> push_redirect(to: socket.assigns.return_to)}
+         |> push_navigate(to: socket.assigns.return_to)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, changeset: changeset)}
