@@ -1,12 +1,11 @@
 # AGENTS Instructions for arboretum
 
-These guidelines explain how the OpenAI Code Assistant should interact with this repository.
+These guidelines explain how the AI Code Assistant should interact with this repository.
 
-## Programmatic Checks
-- Run `mix format` to format Elixir files.
-- Run `mix test` to execute the test suite.
-
-If these commands fail due to missing dependencies or tools, still attempt them and report the failure in the PR message.
+## Code Guidelines
+- Write clean, well-formatted Elixir code following the project's style conventions
+- Include appropriate tests for any new functionality
+- Ensure code is properly documented with Elixir docstrings where appropriate
 
 ## Commit Guidance
 - Work directly on the main branch (no new branches).
