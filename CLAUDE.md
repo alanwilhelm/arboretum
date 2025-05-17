@@ -115,6 +115,23 @@ The main components are:
 
 Database schema migrations are stored in priv/repo/migrations/.
 
+## Git Best Practices
+
+When working with git in this repository:
+
+1. **Always stage changes before attempting merges**:
+   ```bash
+   git add .
+   # or git add specific_file
+   ```
+   
+2. **Check status before operations**:
+   ```bash
+   git status
+   ```
+   
+3. **Be careful with merge operations** - ensure working tree is clean before merging branches
+
 ## GitHub CLI (gh) for Project Management
 
 These are commands and practices for using GitHub CLI for project management in this repository:
