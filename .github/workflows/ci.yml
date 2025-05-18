@@ -51,8 +51,8 @@ jobs:
           node-version: '20'
       - name: Install dependencies
         run: |
-          mix deps.get --only prod
-          mix compile
+          MIX_ENV=prod mix deps.get --only prod
+          MIX_ENV=prod mix compile
       - name: Build assets
         run: |
           MIX_ENV=prod mix assets.setup
