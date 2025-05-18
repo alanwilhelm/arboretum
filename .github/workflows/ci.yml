@@ -1,0 +1,139 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: arboretum_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '26'
+          elixir-version: '1.15'
+      - name: Install dependencies
+        run: mix deps.get
+      - name: Compile
+        run: mix compile --warnings-as-errors
+      - name: Run tests
+        run: mix test
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: '27'
+          elixir-version: '1.18'
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install dependencies
+        run: |
+          mix deps.get --only prod
+          mix compile
+      - name: Build assets
+        run: |
+          MIX_ENV=prod mix assets.setup
+          MIX_ENV=prod mix assets.deploy
+      - name: Build release
+        env:
+          MIX_ENV: prod
+        run: |
+          mix release
+      - name: Upload release artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: release
+          path: _build/prod/rel/arboretum/*.tar.gz
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download release artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: release
+          path: _build/prod/rel/arboretum/
+      - name: Setup SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/norcal-pub.pem
+          chmod 600 ~/.ssh/norcal-pub.pem
+          cat >>~/.ssh/config <<END
+          Host prod
+            HostName 54.153.44.7
+            User ubuntu
+            IdentityFile ~/.ssh/norcal-pub.pem
+            StrictHostKeyChecking no
+          END
+      - name: Deploy to server
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          SECRET_KEY_BASE: ${{ secrets.SECRET_KEY_BASE }}
+        run: |
+          # Copy release to server
+          scp _build/prod/rel/arboretum/*.tar.gz prod:/var/www/arboretum/
+          
+          # Deploy on server
+          ssh prod << 'EOF'
+            cd /var/www/arboretum
+            # Backup current release
+            if [ -f bin/arboretum ]; then
+              tar -czf backup-$(date +%Y%m%d-%H%M%S).tar.gz bin lib releases
+            fi
+            
+            # Stop the current service
+            sudo systemctl stop arboretum || true
+            
+            # Extract new release
+            tar -xzf arboretum-*.tar.gz
+            rm arboretum-*.tar.gz
+            
+            # Update environment
+            cat > .env << 'ENV'
+            PHX_HOST=arboretum.esprezzo.io
+            PORT=4000
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            SECRET_KEY_BASE=${{ secrets.SECRET_KEY_BASE }}
+            MIX_ENV=prod
+            PHX_SERVER=true
+            ENV
+            
+            # Run migrations
+            source .env
+            ./bin/arboretum eval "Arboretum.Release.migrate"
+            
+            # Start the service
+            sudo systemctl start arboretum
+            
+            # Check if it's running
+            sleep 5
+            sudo systemctl status arboretum
+          EOF

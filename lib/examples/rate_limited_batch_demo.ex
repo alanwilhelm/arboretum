@@ -121,7 +121,7 @@ defmodule Arboretum.Examples.RateLimitedBatchDemo do
   - `{:error, reason}` - Error
   """
   def get_results(batch_id) do
-    BatchResults.list_batch_results(%{batch_id: batch_id})
+    {:ok, BatchResults.get_batch_results(batch_id)}
   end
   
   # Helper to get provider and model

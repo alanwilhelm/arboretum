@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Arboretum is a Phoenix web application built with Elixir. It uses Phoenix 1.7, LiveView, Ecto with PostgreSQL, and TailwindCSS for styling.
 
+**GitHub Organization**: This project is hosted under the `floranetwork` organization on GitHub.
+
 ## Commands
 
 ### Setup and Installation
@@ -112,6 +114,23 @@ The main components are:
 4. **Layouts** (lib/arboretum_web/components/layouts/) - Define page layouts
 
 Database schema migrations are stored in priv/repo/migrations/.
+
+## Git Best Practices
+
+When working with git in this repository:
+
+1. **Always stage changes before attempting merges**:
+   ```bash
+   git add .
+   # or git add specific_file
+   ```
+   
+2. **Check status before operations**:
+   ```bash
+   git status
+   ```
+   
+3. **Be careful with merge operations** - ensure working tree is clean before merging branches
 
 ## GitHub CLI (gh) for Project Management
 

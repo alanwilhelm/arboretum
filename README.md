@@ -24,6 +24,8 @@ Arboretum is a powerful dynamic agent architecture built with Elixir and Phoenix
 - PostgreSQL 13+
 - Node.js 18+ (for asset compilation)
 
+For a step-by-step setup walkthrough see [docs/SETUP.md](docs/SETUP.md).
+
 ### Setup
 
 ```bash

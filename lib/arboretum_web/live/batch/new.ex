@@ -2,8 +2,6 @@ defmodule ArboretumWeb.BatchLive.New do
   use ArboretumWeb, :live_view
 
   alias Arboretum.BatchManager
-  alias Arboretum.Agents
-  alias Phoenix.HTML.Form
   
   @impl true
   def mount(_params, _session, socket) do

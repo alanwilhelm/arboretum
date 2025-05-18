@@ -10,7 +10,6 @@ defmodule Arboretum.Agents.AgentServer do
 
   use GenServer
   require Logger
-  alias Arboretum.Agents.Agent
 
   # Client API
 
@@ -65,7 +64,7 @@ defmodule Arboretum.Agents.AgentServer do
       end
     
     # Execute abilities for this responsibility
-    results = execute_all_abilities(payload, state)
+    _results = execute_all_abilities(payload, state)
     
     # Reschedule the task
     state = reschedule_task(responsibility_key, state)
@@ -96,7 +95,7 @@ defmodule Arboretum.Agents.AgentServer do
       end)
     
     if Enum.empty?(matching_responsibilities) do
-      Logger.warn("No matching responsibilities found for key #{responsibility_key}")
+      Logger.warning("No matching responsibilities found for key #{responsibility_key}")
       {:reply, {:error, :no_matching_responsibility}, state}
     else
       # Execute all matching responsibilities

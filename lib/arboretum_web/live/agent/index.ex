@@ -2,7 +2,6 @@ defmodule ArboretumWeb.AgentLive.Index do
   use ArboretumWeb, :live_view
 
   alias Arboretum.Agents
-  alias Arboretum.Agents.Agent
   
   # Helper functions for the template
   defp status_badge_class(status) do

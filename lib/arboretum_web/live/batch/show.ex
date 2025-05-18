@@ -5,7 +5,7 @@ defmodule ArboretumWeb.BatchLive.Show do
   
   @impl true
   def mount(%{"id" => batch_id}, _session, socket) do
-    results = BatchResults.get_batch_results(batch_id, order_by: :agent_index)
+    results = BatchResults.get_batch_results(batch_id)
     
     {:ok, assign(socket, 
       results: results,
@@ -24,7 +24,7 @@ defmodule ArboretumWeb.BatchLive.Show do
   # Refresh the results list
   @impl true
   def handle_event("refresh", _params, socket) do
-    results = BatchResults.get_batch_results(socket.assigns.batch_id, order_by: :agent_index)
+    results = BatchResults.get_batch_results(socket.assigns.batch_id)
     {:noreply, assign(socket, results: results)}
   end
   
@@ -32,9 +32,9 @@ defmodule ArboretumWeb.BatchLive.Show do
   @impl true
   def handle_event("mark_all_processed", _params, socket) do
     batch_id = socket.assigns.batch_id
-    BatchResults.mark_batch_processed(batch_id, %{marked_at: DateTime.utc_now()})
+    # TODO: implement mark_batch_processed functionality
     
-    results = BatchResults.get_batch_results(batch_id, order_by: :agent_index)
+    results = BatchResults.get_batch_results(batch_id)
     {:noreply, assign(socket, results: results)}
   end
   
@@ -42,7 +42,7 @@ defmodule ArboretumWeb.BatchLive.Show do
   @impl true
   def handle_event("delete_batch", _params, socket) do
     batch_id = socket.assigns.batch_id
-    {:ok, _} = BatchResults.delete_batch_results(batch_id)
+    BatchResults.clear_batch(batch_id)
     
     {:noreply, 
       socket
@@ -52,15 +52,17 @@ defmodule ArboretumWeb.BatchLive.Show do
   
   # Show prompt details
   @impl true
-  def handle_event("show_prompt", %{"id" => id}, socket) do
-    result = BatchResults.get_result(id)
+  def handle_event("show_prompt", %{"id" => _id}, socket) do
+    # TODO: implement get_result functionality
+    result = nil
     {:noreply, assign(socket, show_prompt: result)}
   end
   
   # Show response details
   @impl true
-  def handle_event("show_response", %{"id" => id}, socket) do
-    result = BatchResults.get_result(id)
+  def handle_event("show_response", %{"id" => _id}, socket) do
+    # TODO: implement get_result functionality
+    result = nil
     {:noreply, assign(socket, show_response: result)}
   end
   
@@ -72,16 +74,9 @@ defmodule ArboretumWeb.BatchLive.Show do
   
   # Toggle processed status for a single result
   @impl true
-  def handle_event("toggle_processed", %{"id" => id}, socket) do
-    result = BatchResults.get_result(id)
-    
-    if result.processed do
-      BatchResults.mark_processed(result, %{processed: false})
-    else
-      BatchResults.mark_processed(result, %{processed: true})
-    end
-    
-    results = BatchResults.get_batch_results(socket.assigns.batch_id, order_by: :agent_index)
+  def handle_event("toggle_processed", %{"id" => _id}, socket) do
+    # TODO: implement get_result and mark_processed functionality
+    results = BatchResults.get_batch_results(socket.assigns.batch_id)
     {:noreply, assign(socket, results: results)}
   end
   

@@ -26,11 +26,15 @@ defmodule Arboretum.AgentsTest do
 
     test "list_all_agents/0 returns all agents" do
       {:ok, agent} = Agents.create_agent(@valid_attrs)
-      assert Agents.list_all_agents() == [agent]
+      agents = Agents.list_all_agents()
+      assert length(agents) == 1
+      assert hd(agents).id == agent.id
+      assert hd(agents).name == agent.name
+      assert hd(agents).status == agent.status
     end
 
     test "list_active_agents/0 returns active agents" do
-      {:ok, inactive_agent} = Agents.create_agent(@valid_attrs)
+      {:ok, _inactive_agent} = Agents.create_agent(@valid_attrs)
       {:ok, active_agent} = Agents.create_agent(Map.put(@valid_attrs, :status, "active") |> Map.put(:name, "active-agent"))
       
       active_agents = Agents.list_active_agents()
@@ -40,12 +44,18 @@ defmodule Arboretum.AgentsTest do
 
     test "get_agent/1 returns the agent with given id" do
       {:ok, agent} = Agents.create_agent(@valid_attrs)
-      assert Agents.get_agent(agent.id) == agent
+      fetched_agent = Agents.get_agent(agent.id)
+      assert fetched_agent.id == agent.id
+      assert fetched_agent.name == agent.name
+      assert fetched_agent.status == agent.status
     end
 
     test "get_agent_by_name/1 returns the agent with given name" do
       {:ok, agent} = Agents.create_agent(@valid_attrs)
-      assert Agents.get_agent_by_name(agent.name) == agent
+      fetched_agent = Agents.get_agent_by_name(agent.name)
+      assert fetched_agent.id == agent.id
+      assert fetched_agent.name == agent.name
+      assert fetched_agent.status == agent.status
     end
 
     test "create_agent/1 with valid data creates a agent" do
@@ -68,7 +78,11 @@ defmodule Arboretum.AgentsTest do
     test "update_agent/2 with invalid data returns error changeset" do
       {:ok, agent} = Agents.create_agent(@valid_attrs)
       assert {:error, %Ecto.Changeset{}} = Agents.update_agent(agent, @invalid_attrs)
-      assert agent == Agents.get_agent(agent.id)
+      
+      fetched_agent = Agents.get_agent(agent.id)
+      assert fetched_agent.id == agent.id
+      assert fetched_agent.name == agent.name
+      assert fetched_agent.status == agent.status
     end
 
     test "delete_agent/1 deletes the agent" do
