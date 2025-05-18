@@ -12,7 +12,8 @@ defmodule Arboretum.LLMClientTest do
         api_key_env_var: "TEST_API_KEY",
         model: "test-model",
         endpoint_url: "https://test-endpoint.com",
-        base_prompt: "You are a test assistant"
+        base_prompt: "You are a test assistant",
+        provider: :simulated
       }
       
       client = LLMClient.new(config)
@@ -21,7 +22,7 @@ defmodule Arboretum.LLMClientTest do
       assert client.model == "test-model"
       assert client.endpoint_url == "https://test-endpoint.com"
       assert client.base_prompt == "You are a test assistant"
-      assert client.http_client == Tesla
+      assert client.provider == :simulated
     end
     
     test "uses default values for missing config" do
@@ -38,7 +39,8 @@ defmodule Arboretum.LLMClientTest do
       client = %LLMClient{
         api_key: "test-key",
         model: "test-model",
-        endpoint_url: "https://test-endpoint.com"
+        endpoint_url: "https://test-endpoint.com",
+        provider: :simulated
       }
       
       {:ok, response} = LLMClient.query(client, "Test prompt")
@@ -52,7 +54,8 @@ defmodule Arboretum.LLMClientTest do
       client = %LLMClient{
         api_key: nil,
         model: "test-model",
-        endpoint_url: "https://test-endpoint.com"
+        endpoint_url: "https://test-endpoint.com",
+        provider: :simulated
       }
       
       assert {:error, "API key not found"} = LLMClient.query(client, "Test prompt")

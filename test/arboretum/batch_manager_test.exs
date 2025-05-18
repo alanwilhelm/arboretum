@@ -17,7 +17,7 @@ defmodule Arboretum.BatchManagerTest do
 
     test "returns rate limit error when limit is exceeded" do
       # Create a custom test bucket with very low limits
-      bucket = :"test_bucket_#{System.unique_integer([:positive])}"
+      _bucket = :"test_bucket_#{System.unique_integer([:positive])}"
       
       # Override rate limit buckets for testing (this is just for demonstration,
       # in reality we'd need to make the buckets configurable)

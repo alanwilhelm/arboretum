@@ -65,9 +65,9 @@ defmodule Arboretum.BatchManager do
     simulated: {60_000, 500}, # 500 requests per minute (very high for testing)
     
     # Model-specific rate limits (can be more restrictive)
-    "gpt-4": {60_000, 40},   # 40 requests per minute
-    "gpt-4o": {60_000, 80},  # 80 requests per minute
-    "claude-3": {60_000, 50} # 50 requests per minute
+    "gpt-4" => {60_000, 40},   # 40 requests per minute
+    "gpt-4o" => {60_000, 80},  # 80 requests per minute
+    "claude-3" => {60_000, 50} # 50 requests per minute
   }
   
   @doc """

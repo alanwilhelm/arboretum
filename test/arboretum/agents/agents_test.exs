@@ -30,7 +30,7 @@ defmodule Arboretum.AgentsTest do
     end
 
     test "list_active_agents/0 returns active agents" do
-      {:ok, inactive_agent} = Agents.create_agent(@valid_attrs)
+      {:ok, _inactive_agent} = Agents.create_agent(@valid_attrs)
       {:ok, active_agent} = Agents.create_agent(Map.put(@valid_attrs, :status, "active") |> Map.put(:name, "active-agent"))
       
       active_agents = Agents.list_active_agents()

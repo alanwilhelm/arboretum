@@ -213,10 +213,8 @@ defmodule Arboretum.LLMClient do
       Application.put_env(:ex_openai, :api_key, api_key)
     end
     
-    # For direct HTTP usage, configure Tesla
-    client = Tesla.client(middleware())
-    
-    {client, %{}}
+    # Return the Tesla module, not a client struct
+    {Tesla, %{}}
   end
   
   defp setup_client(:anthropic, api_key, _config) do
@@ -225,7 +223,7 @@ defmodule Arboretum.LLMClient do
       {Tesla.Middleware.Headers, [{"x-api-key", api_key}]}
     ])
     
-    {client, %{}}
+    {Tesla, %{}}
   end
   
   defp setup_client(:simulated, _api_key, _config) do
