@@ -219,7 +219,7 @@ defmodule Arboretum.LLMClient do
   
   defp setup_client(:anthropic, api_key, _config) do
     # For Anthropic, configure Tesla client with auth headers
-    client = Tesla.client(middleware() ++ [
+    _client = Tesla.client(middleware() ++ [
       {Tesla.Middleware.Headers, [{"x-api-key", api_key}]}
     ])
     
