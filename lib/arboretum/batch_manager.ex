@@ -57,12 +57,12 @@ defmodule Arboretum.BatchManager do
   # Rate limiting buckets for different LLM providers
   @rate_limit_buckets %{
     # Default bucket for general rate limiting
-    default: {60_000, 100},  # 100 requests per minute
+    :default => {60_000, 100},  # 100 requests per minute
     
     # Provider-specific rate limits
-    openai: {60_000, 90},    # 90 requests per minute (TPM)
-    anthropic: {60_000, 60}, # 60 requests per minute
-    simulated: {60_000, 500}, # 500 requests per minute (very high for testing)
+    :openai => {60_000, 90},    # 90 requests per minute (TPM)
+    :anthropic => {60_000, 60}, # 60 requests per minute
+    :simulated => {60_000, 500}, # 500 requests per minute (very high for testing)
     
     # Model-specific rate limits (can be more restrictive)
     "gpt-4" => {60_000, 40},   # 40 requests per minute
