@@ -55,10 +55,10 @@ defmodule Arboretum.LLMClientTest do
         api_key: nil,
         model: "test-model",
         endpoint_url: "https://test-endpoint.com",
-        provider: :simulated
+        provider: :openai
       }
       
-      assert {:error, "API key not found"} = LLMClient.query(client, "Test prompt")
+      assert {:error, "OpenAI API key not found"} = LLMClient.query(client, "Test prompt")
     end
   end
   
